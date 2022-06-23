@@ -1,10 +1,38 @@
 const User = require('../model/User')
+const Photo = require('../model/Photo')
+const { cloudinary } = require("../config/cloudinary")
+const { createError } = require('../utils/error')
 
 // Update
 module.exports.updateUser = async (req, res, next) => {
-    const { isAdmin, password, refreshToken, _id, createdAt, updatedAt, ...Details } = req.body
+    const { isAdmin, password, refreshToken, _id, createdAt, updatedAt, img, ...Details } = req.body
     try {
         const updateUser = await User.findByIdAndUpdate(req.params.id, { $set: Details }, { new: true, runValidators: true, })
+        const { password, refreshToken, ...otherDetails } = updateUser._doc
+        res.status(200).json(otherDetails)
+    } catch (err) {
+        next(err)
+    }
+}
+
+// Update image
+module.exports.updateImage = async (req, res, next) => {
+
+    try {
+        if (!req.file) return next(createError(400, "No file"))
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'photos-users'
+        })
+        const userImg = {
+            url: result.url,
+            public_id: result.public_id
+        }
+
+        const newPhoto = new Photo(userImg)
+        const savedPhoto = await newPhoto.save()
+
+        const { _id } = savedPhoto
+        const updateUser = await User.findByIdAndUpdate(req.params.id, { $set: { 'img': _id } }, { new: true })
         const { password, refreshToken, ...otherDetails } = updateUser._doc
         res.status(200).json(otherDetails)
     } catch (err) {
