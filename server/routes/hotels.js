@@ -4,16 +4,16 @@ const { verifyAdmin } = require('../middleware/verifyJWT')
 const router = express.Router()
 
 // Create
-router.post('/', createHotel)
+router.post('/', verifyAdmin, createHotel)
 
 // Update
 router.put('/:id', verifyAdmin, updateHotel)
 
 // Update Photos hotel
-router.put('/updatePhoto/:id', updatePhotosHotel)
+router.put('/updatePhoto/:id', verifyAdmin, updatePhotosHotel)
 
 // Delete Photo hotel
-router.delete('/deletePhoto/:hotelId/:photoId', deletePhotoHotel)
+router.delete('/deletePhoto/:hotelId/:photoId', verifyAdmin, deletePhotoHotel)
 
 // Delete
 router.delete('/:id', verifyAdmin, deleteHotel)
