@@ -20,6 +20,16 @@ module.exports.updateImage = async (req, res, next) => {
 
     try {
         if (!req.file) return next(createError(400, "No file"))
+
+        // remove old image of cloudinary and Photo model
+        const user = await User.findById(req.params.id)
+        if (user.img) {
+            const photo = await Photo.findById(user.img)
+            cloudinary.uploader.destroy(photo.public_id)
+            const deletePhoto = await Photo.findByIdAndDelete(photo._id)
+        }
+
+        // add image
         const result = await cloudinary.uploader.upload(req.file.path, {
             folder: 'photos-users'
         })
@@ -43,6 +53,15 @@ module.exports.updateImage = async (req, res, next) => {
 // Delete
 module.exports.deleteUser = async (req, res, next) => {
     try {
+
+        // remove image of cloudinary and Photo model
+        const user = await User.findById(req.params.id)
+        if (user.img) {
+            const photo = await Photo.findById(user.img)
+            cloudinary.uploader.destroy(photo.public_id)
+            const deletePhoto = await Photo.findByIdAndDelete(photo._id)
+        }
+
         const deleteUser = await User.findByIdAndDelete(req.params.id)
         res.status(200).json('User has been deleted')
     } catch (err) {
