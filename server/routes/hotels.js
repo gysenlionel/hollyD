@@ -1,13 +1,19 @@
 const express = require('express')
-const { createHotel, updateHotel, deleteHotel, getHotel, getHotels, countByCity, countByType, getHotelRooms } = require('../controllers/hotelController')
+const { createHotel, updateHotel, deleteHotel, getHotel, getHotels, countByCity, countByType, getHotelRooms, updatePhotosHotel, deletePhotoHotel } = require('../controllers/hotelController')
 const { verifyAdmin } = require('../middleware/verifyJWT')
 const router = express.Router()
 
 // Create
-router.post('/', verifyAdmin, createHotel)
+router.post('/', createHotel)
 
 // Update
 router.put('/:id', verifyAdmin, updateHotel)
+
+// Update Photos hotel
+router.put('/updatePhoto/:id', updatePhotosHotel)
+
+// Delete Photo hotel
+router.delete('/deletePhoto/:hotelId/:photoId', deletePhotoHotel)
 
 // Delete
 router.delete('/:id', verifyAdmin, deleteHotel)
