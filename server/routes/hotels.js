@@ -1,5 +1,5 @@
 const express = require('express')
-const { createHotel, updateHotel, deleteHotel, getHotel, getHotels, countByCity, countByType, getHotelRooms } = require('../controllers/hotelController')
+const { createHotel, updateHotel, deleteHotel, getHotel, getHotels, countByCity, countByType, getHotelRooms, updatePhotosHotel, deletePhotoHotel } = require('../controllers/hotelController')
 const { verifyAdmin } = require('../middleware/verifyJWT')
 const router = express.Router()
 
@@ -8,6 +8,12 @@ router.post('/', verifyAdmin, createHotel)
 
 // Update
 router.put('/:id', verifyAdmin, updateHotel)
+
+// Update Photos hotel
+router.put('/updatePhoto/:id', verifyAdmin, updatePhotosHotel)
+
+// Delete Photo hotel
+router.delete('/deletePhoto/:hotelId/:photoId', verifyAdmin, deletePhotoHotel)
 
 // Delete
 router.delete('/:id', verifyAdmin, deleteHotel)

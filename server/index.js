@@ -25,7 +25,7 @@ app.use(credentials)
 app.use(cors(corsOptions))
 
 // built-in middleware for json
-app.use(express.json())
+app.use(express.json({ limit: '20mb' }))
 
 // middleware for cookies
 app.use(cookieParser())

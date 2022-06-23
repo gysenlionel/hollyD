@@ -23,6 +23,7 @@ const RoomSchema = new mongoose.Schema({
     { timestamps: true }
 )
 
+
 const Room = mongoose.model('Room', RoomSchema)
 
 module.exports = Room
