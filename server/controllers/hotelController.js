@@ -22,15 +22,15 @@ module.exports.createHotel = async (req, res, next) => {
             const response = await Promise.all(promises)
             let savedPhotosArray = []
             await Promise.all(response.map(async res => {
-                const hotelPhotos = {
+                const hotelPhoto = {
                     url: res.url,
                     public_id: res.public_id
                 }
-                const newPhotos = new Photo(hotelPhotos)
+                const newPhoto = new Photo(hotelPhoto)
 
                 try {
-                    const savedPhotos = await newPhotos.save()
-                    savedPhotosArray.push(savedPhotos)
+                    const savedPhoto = await newPhoto.save()
+                    savedPhotosArray.push(savedPhoto)
                 } catch (err) {
                     next(err)
                 }
@@ -96,15 +96,15 @@ module.exports.updatePhotosHotel = async (req, res, next) => {
         const response = await Promise.all(promises)
         let savedPhotosArray = []
         await Promise.all(response.map(async res => {
-            const hotelPhotos = {
+            const hotelPhoto = {
                 url: res.url,
                 public_id: res.public_id
             }
-            const newPhotos = new Photo(hotelPhotos)
+            const newPhoto = new Photo(hotelPhoto)
 
             try {
-                const savedPhotos = await newPhotos.save()
-                savedPhotosArray.push(savedPhotos)
+                const savedPhoto = await newPhoto.save()
+                savedPhotosArray.push(savedPhoto)
             } catch (err) {
                 next(err)
             }

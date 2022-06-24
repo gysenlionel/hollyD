@@ -3,9 +3,9 @@ const express = require('express')
 const app = express()
 const path = require('path')
 const cors = require('cors')
-// const corsOptions = require('./config/corsOptions')
+const corsOptions = require('./config/corsOptions')
 const cookieParser = require('cookie-parser')
-// const credentials = require('./middleware/credentials')
+const credentials = require('./middleware/credentials')
 const mongoose = require('mongoose')
 const connectDB = require('./config/dbConnection')
 const PORT = process.env.PORT || 8000
@@ -19,24 +19,9 @@ const rooms = require('./routes/rooms')
 connectDB()
 
 // Handle options credentials check before CORS
-// app.use(credentials)
+app.use(credentials)
 
 // Cross Origin Ressource Sharing
-
-// configuration CORS
-// const whitelist = [process.env.CLIENT_URL, process.env.ADMIN_URL]
-const corsOptions = {
-    origin: process.env.CLIENT_URL,
-    // origin: function (origin, callback) {
-    //     if (whitelist.indexOf(origin) !== -1) {
-    //         callback(null, true)
-    //     } else {
-    //         callback(new Error('Not allowed by CORS'))
-    //     }
-    // },
-    credentials: true,
-}
-
 app.use(cors(corsOptions))
 
 // built-in middleware for json

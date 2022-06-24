@@ -10,7 +10,7 @@ module.exports.register = async (req, res, next) => {
         const salt = bcrypt.genSaltSync(10)
         const hash = bcrypt.hashSync(req.body.password, salt)
 
-        const { isAdmin, refreshToken, _id, ...otherDetails } = req.body
+        const { isAdmin, refreshToken, _id, img, ...otherDetails } = req.body
         const newUser = new User({
             ...otherDetails,
             password: hash

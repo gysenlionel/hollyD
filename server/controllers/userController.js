@@ -5,7 +5,7 @@ const { createError } = require('../utils/error')
 
 // Update
 module.exports.updateUser = async (req, res, next) => {
-    const { isAdmin, password, refreshToken, _id, createdAt, updatedAt, img, ...Details } = req.body
+    const { isAdmin, password, refreshToken, _id, createdAt, updatedAt, img, username, ...Details } = req.body
     try {
         const updateUser = await User.findByIdAndUpdate(req.params.id, { $set: Details }, { new: true, runValidators: true, })
         const { password, refreshToken, ...otherDetails } = updateUser._doc
@@ -69,12 +69,37 @@ module.exports.deleteUser = async (req, res, next) => {
     }
 }
 
+// Delete image
+module.exports.deleteUserImage = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id)
+        if (user.img) {
+            const photo = await Photo.findById(user.img)
+            cloudinary.uploader.destroy(photo.public_id)
+            const deletePhoto = await Photo.findByIdAndDelete(photo._id)
+            const updateUser = await User.findByIdAndUpdate(req.params.id, { $set: { 'img': '' } }, { new: true })
+            res.status(200).json('Photo has been deleted')
+        } else {
+            res.status(404).json('No image to delete')
+        }
+    } catch (err) {
+        next(err)
+    }
+}
+
 // Get one
 module.exports.getUser = async (req, res, next) => {
     try {
         const user = await User.findById(req.params.id)
-        const { password, refreshToken, ...otherDetails } = user._doc
-        res.status(200).json(otherDetails)
+        const photo = await Photo.findById(user.img)
+        const { password, refreshToken, img, ...otherDetails } = user._doc
+
+        const objUser = {
+            img: photo,
+            ...otherDetails
+        }
+
+        res.status(200).json(objUser)
     } catch (err) {
         next(err)
     }
@@ -84,10 +109,20 @@ module.exports.getUser = async (req, res, next) => {
 module.exports.getUsers = async (req, res, next) => {
     try {
         const users = await User.find()
-        const usersWithoutToken = users.map(u => {
-            const { password, refreshToken, ...otherDetails } = u._doc
-            return otherDetails
-        })
+        const usersWithoutToken = await Promise.all(users.map(async u => {
+            const { password, refreshToken, img, ...otherDetails } = u._doc
+            if (u.img) {
+                const photo = await Photo.findById(u.img)
+                const objUser = {
+                    img: photo,
+                    ...otherDetails
+                }
+                return objUser
+            } else {
+
+                return otherDetails
+            }
+        }))
         res.status(200).json(usersWithoutToken)
     } catch (err) {
         next(err)
