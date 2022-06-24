@@ -1,21 +1,20 @@
 const multer = require('multer')
 
-// const maxSize = 1 * 1000 * 1000;
 module.exports = multer({
     storage: multer.diskStorage({}),
-    // limits: { fileSize: maxSize },
-    fileFilter: (req, file, cb) => {
-
-        // The function should call `cb` with a boolean
-        // to indicate if the file should be accepted
-
-        if (!file.mimetype.match(/png||jpeg||jpg||gif$i/)) {
-            // You can always pass an error if something goes wrong:
-            cb(new Error('file does not support'), false)
-            return
+    fileFilter: function (req, file, cb) {
+        if (
+            file.mimetype == 'image/png' ||
+            file.mimetype == 'image/jpg' ||
+            file.mimetype == 'image/jpeg'
+        ) {
+            cb(null, true)
+        } else {
+            cb(null, false)
+            return cb(new Error('file does not support'))
         }
-
-        // To accept the file pass `true`, like so:
-        cb(null, true)
-    }
+    },
+    limits: {
+        fileSize: 1024 * 1024 * 3,
+    },
 })
