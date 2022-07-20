@@ -1,5 +1,8 @@
 require('dotenv').config()
 const express = require('express')
+const swaggerUI = require('swagger-ui-express')
+const YAML = require('yamljs')
+const swaggerJsDocs = YAML.load('./api.yaml')
 const app = express()
 const path = require('path')
 const cors = require('cors')
@@ -32,6 +35,9 @@ app.use(cookieParser())
 
 // serve static files
 app.use('/', express.static(path.join(__dirname, '/public')))
+
+// swagger
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerJsDocs))
 
 // routes
 app.use('/api/auth', authRoutes)
