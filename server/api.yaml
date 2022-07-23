@@ -16,12 +16,13 @@ securityDefinitions:
     name: Authorization
     in: header
 
+security:
+  - Bearer: []
+
 paths:
   # Post json/body
   /api/hotels:
     post:
-      security:
-        - Bearer: []
       tags:
         - Hotel Data
       summary: Posting Data
@@ -31,6 +32,7 @@ paths:
         - application/json
       parameters:
         - in: body
+          name: hotel
           schema:
             $ref: "#/components/schemas/Hotel"
       responses:

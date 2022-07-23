@@ -8,7 +8,6 @@ const path = require('path')
 const cors = require('cors')
 const corsOptions = require('./config/corsOptions')
 const cookieParser = require('cookie-parser')
-const credentials = require('./middleware/credentials')
 const mongoose = require('mongoose')
 const connectDB = require('./config/dbConnection')
 const PORT = process.env.PORT || 8000
@@ -21,11 +20,11 @@ const rooms = require('./routes/rooms')
 // Connect to MongoDB
 connectDB()
 
-// Handle options credentials check before CORS
-app.use(credentials)
-
 // Cross Origin Ressource Sharing
 app.use(cors(corsOptions))
+
+// built-in middleware to handle urlencoded form data
+app.use(express.urlencoded({ extended: false }));
 
 // built-in middleware for json
 app.use(express.json({ limit: '20mb' }))
