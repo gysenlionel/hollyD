@@ -25,7 +25,7 @@ paths:
     post:
       tags:
         - Hotel Data
-      summary: Posting Data
+      summary: Posting Hotel
       produces:
         - application/json
       consumes:
@@ -38,6 +38,71 @@ paths:
       responses:
         200:
           description: OK
+
+  # Put json/body
+  /api/hotels/{id}:
+    put:
+      tags:
+        - Hotel Data
+      summary: Updating Hotel
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+        - in: body
+          name: hotel
+          schema:
+            $ref: "#/components/schemas/Hotel"
+      responses:
+        200:
+          description: OK
+
+  # Put json/body
+  /api/hotels//updatePhoto/{id}:
+    put:
+      tags:
+        - Hotel Data
+      summary: Post Photos Hotel
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: id
+          in: path
+          description: Id of Hotel
+          required: true
+        - in: formData
+          name: photos
+          type: array
+          items:
+            type: file
+          collectionFormat: multi
+          required: true
+          description: Files Upload
+      responses:
+        200:
+          description: OK
+
+  # Delete
+  /api/hotels/{id}/:
+    delete:
+      tags:
+        - Hotel Data
+      summary: Deleting Hotel
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+      responses:
+        200:
+          description: Hotel Deleted
 
   # return Hotels
   /api/hotels/:
