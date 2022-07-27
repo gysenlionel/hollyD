@@ -4,7 +4,7 @@ import { IUser } from "../../types/user"
 export interface IDataAuth {
     auth:{
         token:string,
-        user: any
+        user: string
     }
 }
 
@@ -13,8 +13,8 @@ const authSlice = createSlice({
     initialState: {user: null, token: null},
     reducers: {
         setCredentials: (state, action) => {
-            const {user, accessToken } = action.payload
-            state.user = user
+            const {username, accessToken } = action.payload
+            state.user = username
             state.token = accessToken
         },
         logOut: (state, action) => {

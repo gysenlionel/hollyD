@@ -35,8 +35,7 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
       dispatch(setCredentials({ ...userData, username }));
       setUsername("");
       setPassword("");
-      navigate("/");
-      console.log("logg");
+      navigate("/protected");
     } catch (err: any) {
       if (!err?.data) {
         setErrMsg("No Server Response");
