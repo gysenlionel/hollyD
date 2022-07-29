@@ -7,7 +7,7 @@ const { createError } = require('../utils/error')
 
 module.exports.register = async (req, res, next) => {
     try {
-        const salt = bcrypt.genSaltSync(10)
+        const salt = bcrypt.genSaltSync(parseInt(process.env.SALT))
         const hash = bcrypt.hashSync(req.body.password, salt)
 
         const { isAdmin, refreshToken, _id, img, ...otherDetails } = req.body
@@ -30,7 +30,7 @@ module.exports.login = async (req, res, next) => {
         const cookies = req.cookies
 
         const user = await User.findOne({ username: req.body.username })
-        if (!user) return next(createError(404, 'User not found'))
+        if (!user) return next(createError(404, 'Wrong password or username'))
 
         const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password)
         if (!isPasswordCorrect) return next(createError(400, "Wrong password or username"))

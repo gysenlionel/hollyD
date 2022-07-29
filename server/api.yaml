@@ -20,7 +20,126 @@ security:
   - Bearer: []
 
 paths:
-  # Post json/body
+  # Post json/body Register
+  /api/auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register a user
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: Register
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/User"
+              - type: object
+                properties:
+                  password:
+                    type: string
+                    required: true
+                    minLength: 6
+                    maxLength: 1024
+      responses:
+        200:
+          description: User has been created
+
+  # Post json/body Login
+  /api/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Logged In
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: Loggin
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                required: true
+                minLength: 3
+                maxLength: 55
+              password:
+                type: string
+                required: true
+                minLength: 6
+                maxLength: 1024
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              accessToken:
+                type: string
+        400:
+          description: Wrong password or username
+        404:
+          description: Wrong password or username
+        500:
+          description: Internal Server Error
+
+    # Logout
+  /api/auth/logout:
+    get:
+      tags:
+        - Auth
+      summary: Logout a user
+      description: Logout a user
+      responses:
+        204:
+          description: Success
+
+    # Refresh Token
+  /api/auth/:
+    get:
+      tags:
+        - Auth
+      summary: Refresh token
+      description: Refresh token of user
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              accessToken:
+                type: string
+        401:
+          description: No authenticated
+        403:
+          description: Error
+
+      # Return User
+  /api/users/{id}:
+    get:
+      tags:
+        - User
+      summary: Return an object
+      description: Return an object user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 62e4100ac03dfcdbef190e03
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/components/schemas/User"
+
+  # Post json/body Hotel
   /api/hotels:
     post:
       tags:
@@ -39,7 +158,7 @@ paths:
         200:
           description: OK
 
-  # Put json/body
+  # Put json/body Hotel
   /api/hotels/{id}:
     put:
       tags:
@@ -61,7 +180,7 @@ paths:
         200:
           description: OK
 
-  # Put json/body
+  # Put json/body Photos Hotel (problem photos in req.body)
   /api/hotels//updatePhoto/{id}:
     put:
       tags:
@@ -86,7 +205,7 @@ paths:
         200:
           description: OK
 
-  # Delete
+  # Delete Hotel
   /api/hotels/{id}/:
     delete:
       tags:
@@ -103,6 +222,29 @@ paths:
       responses:
         200:
           description: Hotel Deleted
+
+  # Delete Photo Hotel
+  /api/hotels/deletePhoto/{hotelId}/{photoId}:
+    delete:
+      tags:
+        - Hotel Data
+      summary: Deleting Photo hotel
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: hotelId
+          in: path
+          required: true
+          description: Hotel ID to delete
+        - name: photoId
+          in: path
+          required: true
+          description: Photo ID to delete
+      responses:
+        200:
+          description: Photo deleted
 
   # return Hotels
   /api/hotels/:
@@ -370,3 +512,56 @@ components:
             type: string
             format: date-time
             readOnly: true
+    User:
+      type: object
+      properties:
+        _id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          required: true
+          minLength: 3
+          maxLength: 55
+        email:
+          type: string
+          required: true
+        IsAdmin:
+          type: boolean
+          readOnly: true
+        firstname:
+          type: string
+          required: true
+          minLength: 1
+          maxLength: 55
+        lastname:
+          type: string
+          required: true
+          minLength: 1
+          maxLength: 55
+        country:
+          type: string
+          required: true
+          minLength: 1
+          maxLength: 100
+        img:
+          type: string
+          readOnly: true
+        city:
+          type: string
+          required: true
+          minLength: 1
+          maxLength: 100
+        address:
+          type: string
+          required: true
+          minLength: 2
+          maxLength: 100
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
