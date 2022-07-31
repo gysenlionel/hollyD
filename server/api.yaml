@@ -290,29 +290,29 @@ paths:
           description: OK
 
   # Put json/body Photos Hotel (problem photos in req.body not possible with 2.0 -> possible with swagger 3.0)
-  /api/hotels/updatePhoto/{id}:
-    put:
-      tags:
-        - Hotel Data
-      summary: Post Photos Hotel
-      consumes:
-        - multipart/form-data
-      parameters:
-        - name: id
-          in: path
-          description: Id of Hotel
-          required: true
-        - in: formData
-          name: photos
-          type: array
-          items:
-            type: file
-          collectionFormat: multi
-          required: true
-          description: Files Upload
-      responses:
-        200:
-          description: OK
+  # /api/hotels/updatePhoto/{id}:
+  #   put:
+  #     tags:
+  #       - Hotel Data
+  #     summary: Post Photos Hotel
+  #     consumes:
+  #       - multipart/form-data
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: Id of Hotel
+  #         required: true
+  #       - in: formData
+  #         name: photos
+  #         type: array
+  #         items:
+  #           type: file
+  #         collectionFormat: multi
+  #         required: true
+  #         description: Files Upload
+  #     responses:
+  #       200:
+  #         description: OK
 
   # Delete Hotel
   /api/hotels/{id}/:
