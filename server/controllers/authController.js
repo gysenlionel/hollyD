@@ -30,7 +30,7 @@ module.exports.login = async (req, res, next) => {
         const cookies = req.cookies
 
         const user = await User.findOne({ username: req.body.username })
-        if (!user) return next(createError(404, 'Wrong password or username'))
+        if (!user) return next(createError(404, "Wrong password or username"))
 
         const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password)
         if (!isPasswordCorrect) return next(createError(400, "Wrong password or username"))
@@ -53,7 +53,6 @@ module.exports.login = async (req, res, next) => {
 
             // Detected refresh token reuse
             if (!foundToken) {
-                console.log('attempted refresh token reuse at login')
                 newRefreshToken = []
             }
 
