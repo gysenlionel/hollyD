@@ -30,6 +30,7 @@ module.exports.updateRoom = async (req, res, next) => {
     }
 }
 
+// Update availability
 module.exports.updateRoomAvailability = async (req, res, next) => {
     try {
         await Room.updateOne({ "roomNumbers._id": req.params.roomNumberId }, {
@@ -65,6 +66,17 @@ module.exports.getRoom = async (req, res, next) => {
     try {
         const room = await Room.findById(req.params.id)
         res.status(200).json(room)
+    } catch (err) {
+        next(err)
+    }
+}
+
+// Get one roomNumber
+module.exports.getRoomNumber = async (req, res, next) => {
+    try {
+        const room = await Room.findOne({ "roomNumbers._id": req.params.roomNumberId })
+        const roomNumber = room.roomNumbers.filter((rm) => rm.id.toString() === req.params.roomNumberId)
+        res.status(200).json(roomNumber)
     } catch (err) {
         next(err)
     }

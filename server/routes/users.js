@@ -6,7 +6,7 @@ const upload = require('../config/multer')
 const router = express.Router()
 
 // Update
-router.put('/:id', verifyUser, updateUser)
+router.put('/user/:id', verifyUser, updateUser)
 
 // Update img
 router.put('/updateImg/:id', upload.single('image'), verifyUser, updateImage)
