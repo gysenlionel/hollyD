@@ -82,7 +82,6 @@ module.exports.updateHotel = async (req, res, next) => {
 // Update Photos
 module.exports.updatePhotosHotel = async (req, res, next) => {
     try {
-
         const images = req.body.photos
         let promises = []
         images.forEach(async image => {

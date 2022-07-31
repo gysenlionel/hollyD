@@ -1,6 +1,6 @@
 const express = require('express')
 const { verifyAdmin, verifyUser } = require('../middleware/verifyJWT')
-const { createRoom, updateRoom, updateRoomAvailability, deleteRoom, getRoom, getRooms } = require('../controllers/roomController')
+const { createRoom, updateRoom, updateRoomAvailability, deleteRoom, getRoom, getRooms, getRoomNumber } = require('../controllers/roomController')
 const router = express.Router()
 
 // Create
@@ -17,6 +17,9 @@ router.delete('/:id/:hotelId', verifyAdmin, deleteRoom)
 
 // Get one
 router.get('/:id', getRoom)
+
+// Get one RoomNumber
+router.get('/getRoomNumber/:roomNumberId', getRoomNumber)
 
 // Get all
 router.get('/', getRooms)

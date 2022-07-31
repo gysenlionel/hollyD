@@ -17,7 +17,6 @@ module.exports.updateUser = async (req, res, next) => {
 
 // Update image
 module.exports.updateImage = async (req, res, next) => {
-
     try {
         if (!req.file) return next(createError(400, "No file"))
 
@@ -43,8 +42,15 @@ module.exports.updateImage = async (req, res, next) => {
 
         const { _id } = savedPhoto
         const updateUser = await User.findByIdAndUpdate(req.params.id, { $set: { 'img': _id } }, { new: true })
-        const { password, refreshToken, ...otherDetails } = updateUser._doc
-        res.status(200).json(otherDetails)
+        const { password, refreshToken, img, ...otherDetails } = updateUser._doc
+
+        const photo = await Photo.findById(img)
+
+        const objUser = {
+            img: photo,
+            ...otherDetails
+        }
+        res.status(200).json(objUser)
     } catch (err) {
         next(err)
     }

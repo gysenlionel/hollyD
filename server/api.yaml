@@ -1,0 +1,876 @@
+swagger: "2.0"
+info:
+  title: HolyD
+  description: This is API holyD documentation made by Lionel.
+  version: 1.0
+  servers:
+    -url: "http://localhost:8000/"
+    description: This is my local server
+
+schemes: [http, https]
+
+#Auth
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+
+security:
+  - Bearer: []
+
+paths:
+  # Post json/body Register
+  /api/auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register a user
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: Register
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/User"
+              - type: object
+                properties:
+                  password:
+                    type: string
+                    required: true
+                    minLength: 6
+                    maxLength: 1024
+      responses:
+        200:
+          description: User has been created
+
+  # Post json/body Login
+  /api/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Logged In
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: Loggin
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                required: true
+                minLength: 3
+                maxLength: 55
+              password:
+                type: string
+                required: true
+                minLength: 6
+                maxLength: 1024
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              accessToken:
+                type: string
+        400:
+          description: Wrong password or username
+        404:
+          description: Wrong password or username
+        500:
+          description: Internal Server Error
+
+    # Logout
+  /api/auth/logout:
+    get:
+      tags:
+        - Auth
+      summary: Logout a user
+      description: Logout a user
+      responses:
+        204:
+          description: Success
+
+    # Refresh Token
+  /api/auth/:
+    get:
+      tags:
+        - Auth
+      summary: Refresh token
+      description: Refresh token of user
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              accessToken:
+                type: string
+        401:
+          description: No authenticated
+        403:
+          description: Error
+
+  # Put json/body User
+  /api/users/user/{id}:
+    put:
+      tags:
+        - User Data
+      summary: Updating User
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of user
+        - in: body
+          name: hotel
+          schema:
+            $ref: "#/components/schemas/User"
+      responses:
+        200:
+          schema:
+            $ref: "#/components/schemas/User"
+
+  # Put json/body Photos User
+  /api/users/updateImg/{id}:
+    put:
+      tags:
+        - User Data
+      summary: Post Image of User
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: id
+          in: path
+          description: Id of User
+          required: true
+        - in: formData
+          name: image
+          type: file
+          required: true
+          description: Files Upload
+      responses:
+        200:
+          description: Success
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/ImgUser"
+              - $ref: "#/components/schemas/User"
+
+  # Delete User
+  /api/users/{id}/:
+    delete:
+      tags:
+        - User Data
+      summary: Deleting User
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of user
+      responses:
+        200:
+          description: User has been deleted
+
+  # Delete Photo of user
+  /api/users/deleteImage/{id}:
+    delete:
+      tags:
+        - User Data
+      summary: Deleting photo of user
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of user
+      responses:
+        200:
+          description: Photo has been deleted
+
+      # Return User
+  /api/users/{id}:
+    get:
+      tags:
+        - User Data
+      summary: Returns an object of User
+      description: Returns an object of User. img object can be undefined
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of user
+          schema:
+            type: integer
+            example: 62e4100ac03dfcdbef190e03
+      responses:
+        200:
+          description: Success
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/ImgUser"
+              - $ref: "#/components/schemas/User"
+
+      # Return Users
+  /api/users:
+    get:
+      tags:
+        - User Data
+      summary: Returns an Array of Users
+      description: Returns an Array of Users. img object can be undefined
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              allOf:
+                - $ref: "#/components/schemas/ImgUser"
+                - $ref: "#/components/schemas/User"
+
+  # Post json/body Hotel
+  /api/hotels:
+    post:
+      tags:
+        - Hotel Data
+      summary: Posting Hotel
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: hotel
+          schema:
+            $ref: "#/components/schemas/Hotel"
+      responses:
+        200:
+          description: OK
+
+  # Put json/body Hotel
+  /api/hotels/{id}:
+    put:
+      tags:
+        - Hotel Data
+      summary: Updating Hotel
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of hotel
+        - in: body
+          name: hotel
+          schema:
+            $ref: "#/components/schemas/Hotel"
+      responses:
+        200:
+          description: OK
+
+  # Put json/body Photos Hotel (problem photos in req.body not possible with 2.0 -> possible with swagger 3.0)
+  /api/hotels/updatePhoto/{id}:
+    put:
+      tags:
+        - Hotel Data
+      summary: Post Photos Hotel
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: id
+          in: path
+          description: Id of Hotel
+          required: true
+        - in: formData
+          name: photos
+          type: array
+          items:
+            type: file
+          collectionFormat: multi
+          required: true
+          description: Files Upload
+      responses:
+        200:
+          description: OK
+
+  # Delete Hotel
+  /api/hotels/{id}/:
+    delete:
+      tags:
+        - Hotel Data
+      summary: Deleting Hotel
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of hotel
+      responses:
+        200:
+          description: Hotel Deleted
+
+  # Delete Photo Hotel
+  /api/hotels/deletePhoto/{hotelId}/{photoId}:
+    delete:
+      tags:
+        - Hotel Data
+      summary: Deleting Photo hotel
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: hotelId
+          in: path
+          required: true
+          description: Hotel ID to delete
+        - name: photoId
+          in: path
+          required: true
+          description: Photo ID to delete
+      responses:
+        200:
+          description: Photo deleted
+
+  # return Hotels
+  /api/hotels/:
+    get:
+      tags:
+        - Hotel Data
+      parameters:
+        - in: query
+          name: featured
+          type: boolean
+        - in: query
+          name: limit
+          type: integer
+          default: 10
+          description: number of hotels by request
+        - in: query
+          name: min
+          type: integer
+          description: Price min
+        - in: query
+          name: max
+          type: integer
+          description: Price max
+      summary: Returns a Array of Hotels
+      description: Array Return of hotels. photos object can be null
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              allOf:
+                - $ref: "#/components/schemas/ImgArray"
+                - $ref: "#/components/schemas/Hotel"
+        400:
+          description: Hotels Error
+        500:
+          description: Internal Server Error
+
+  # return Hotel
+  /api/hotels/find/{id}:
+    get:
+      tags:
+        - Hotel Data
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of hotel
+          schema:
+            type: integer
+            example: 62ac496c07509a710f01c17a
+      summary: Returns a object of Hotel
+      description: Returns a object of Hotel through its id. photos object can be null
+      responses:
+        200:
+          description: Success
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/ImgArray"
+              - $ref: "#/components/schemas/Hotel"
+        400:
+          description: Hotel Error
+        500:
+          description: Internal Server Error
+
+  # return count by city
+  /api/hotels/countByCity:
+    get:
+      tags:
+        - Hotel Data
+      parameters:
+        - in: query
+          name: cities
+          type: string
+          example: bruxelles,roma
+          required: true
+          description: Type your city
+      summary: Returns an array of number
+      description: Returns an array of number of cities
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              type: integer
+        400:
+          description: City error
+        500:
+          description: Internal Server Error
+
+  # return count by city
+  /api/hotels/countByType:
+    get:
+      tags:
+        - Hotel Data
+      summary: Returns an array of object
+      description: Returns an array of object. the object has a type and the counting of this type.
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                type:
+                  type: string
+                count:
+                  type: integer
+        400:
+          description: Hotels error
+        500:
+          description: Internal Server Error
+
+  # return Room of hotel
+  /api/hotels/rooms/{id}:
+    get:
+      tags:
+        - Hotel Data
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of hotel
+          schema:
+            type: integer
+            example: 62ac496c07509a710f01c17a
+      summary: Returns an array of object
+      description: Returns an array of room object.
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Room"
+        400:
+          description: Hotel Error
+        500:
+          description: Internal Server Error
+
+  # Post json/body Room
+  /api/rooms/{hotelId}:
+    post:
+      tags:
+        - Room Data
+      summary: Posting Room
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: hotelId
+          in: path
+          required: true
+          description: id of hotel
+          schema:
+            type: integer
+            example: 62ac496c07509a710f01c17a
+        - in: body
+          name: hotel
+          schema:
+            $ref: "#/components/schemas/Room"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/components/schemas/Room"
+
+  # Put json/body Room
+  /api/rooms/{id}:
+    put:
+      tags:
+        - Room Data
+      summary: Updating Room
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of Room
+          schema:
+            type: integer
+            example: 62b066997a5ac696c9b22145
+        - in: body
+          name: room
+          schema:
+            $ref: "#/components/schemas/Room"
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/components/schemas/Room"
+
+  # Put json/body availability
+  /api/rooms/availability/{roomNumberId}:
+    put:
+      tags:
+        - Room Data
+      summary: Updating availability
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: roomNumberId
+          in: path
+          required: true
+          description: id of roomNumbers object into Room model
+          schema:
+            type: integer
+            example: 62b066997a5ac696c9b22145
+        - in: body
+          name: room
+          schema:
+            type: object
+            properties:
+              dates:
+                type: array
+                items:
+                  type: string
+                  format: date-time
+      responses:
+        200:
+          description: Room status has been updated
+
+  # Delete Room
+  /api/rooms/{id}/{hotelId}:
+    delete:
+      tags:
+        - Room Data
+      summary: Deleting Room
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Room ID to delete
+        - name: hotelId
+          in: path
+          required: true
+          description: Hotel ID
+      responses:
+        200:
+          description: Room has been deleted
+
+    # return Rooms
+  /api/rooms/:
+    get:
+      tags:
+        - Room Data
+      summary: Returns a Array of Rooms
+      description: Array Return of Rooms
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Room"
+
+    # return Room
+  /api/rooms/{id}/:
+    get:
+      tags:
+        - Room Data
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of Room
+          schema:
+            type: integer
+            example: 62b065bf7a5ac696c9b2212c
+      summary: Returns a object of Room
+      description: Returns a object of Room
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/components/schemas/Room"
+
+    # return RoomNumber
+  /api/rooms/getRoomNumber/{roomNumberId}:
+    get:
+      tags:
+        - Room Data
+      parameters:
+        - name: roomNumberId
+          in: path
+          required: true
+          description: Id of RoomNumber
+          schema:
+            type: integer
+            example: 62b065bf7a5ac696c9b2212e
+      summary: Returns an array of object RoomNumber
+      description: Returns a array of object RoomNumber
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                number:
+                  type: integer
+                  required: true
+                unavailableDates:
+                  type: array
+                  items:
+                    type: string
+                    format: date-time
+                _id:
+                  type: string
+                  required: true
+
+# Component
+components:
+  schemas:
+    Hotel:
+      type: object
+      properties:
+        _id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          required: true
+        type:
+          type: string
+          required: true
+        city:
+          type: string
+          required: true
+        address:
+          type: string
+          required: true
+        distance:
+          type: string
+          required: true
+        photos:
+          type: array
+          readOnly: true
+        title:
+          type: string
+          required: true
+        desc:
+          type: string
+          required: true
+        rating:
+          type: integer
+          minimum: 0
+          maximum: 5
+        rooms:
+          type: array
+        cheapestPrice:
+          type: integer
+          required: true
+        featured:
+          type: boolean
+          default: false
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+    User:
+      type: object
+      properties:
+        _id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          required: true
+          minLength: 3
+          maxLength: 55
+        email:
+          type: string
+          required: true
+        IsAdmin:
+          type: boolean
+          readOnly: true
+          default: false
+        firstname:
+          type: string
+          required: true
+          minLength: 1
+          maxLength: 55
+        lastname:
+          type: string
+          required: true
+          minLength: 1
+          maxLength: 55
+        country:
+          type: string
+          required: true
+          minLength: 1
+          maxLength: 100
+        city:
+          type: string
+          required: true
+          minLength: 1
+          maxLength: 100
+        address:
+          type: string
+          required: true
+          minLength: 2
+          maxLength: 100
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+    ImgUser:
+      type: object
+      properties:
+        img:
+          type: object
+          properties:
+            _id:
+              type: integer
+              readOnly: true
+            url:
+              type: string
+              readOnly: true
+            public_id:
+              type: string
+              readOnly: true
+            createdAt:
+              type: string
+              format: date-time
+              readOnly: true
+            updatedAt:
+              type: string
+              format: date-time
+              readOnly: true
+    ImgArray:
+      type: object
+      properties:
+        photos:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: integer
+                readOnly: true
+              url:
+                type: string
+                readOnly: true
+              public_id:
+                type: string
+                readOnly: true
+              createdAt:
+                type: string
+                format: date-time
+                readOnly: true
+              updatedAt:
+                type: string
+                format: date-time
+                readOnly: true
+    Room:
+      type: object
+      properties:
+        _id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          required: true
+        price:
+          type: number
+          required: true
+        maxPeople:
+          type: integer
+          required: true
+        desc:
+          type: string
+          required: true
+        roomNumbers:
+          type: array
+          items:
+            type: object
+            properties:
+              number:
+                type: integer
+              unavailableDates:
+                type: array
+                items:
+                  type: string
+                  format: date-time
+                readOnly: true
+              _id:
+                type: integer
+                readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true

@@ -7,7 +7,7 @@ const { createError } = require('../utils/error')
 
 module.exports.register = async (req, res, next) => {
     try {
-        const salt = bcrypt.genSaltSync(10)
+        const salt = bcrypt.genSaltSync(parseInt(process.env.SALT))
         const hash = bcrypt.hashSync(req.body.password, salt)
 
         const { isAdmin, refreshToken, _id, img, ...otherDetails } = req.body
